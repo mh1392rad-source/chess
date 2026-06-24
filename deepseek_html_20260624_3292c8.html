@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♚ شطرنج حرفه‌ای · با تایمر و AI قوی</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Vazir', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a1a, #1a1a3e, #0f2847);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .login-page {
+            width: 100%;
+            max-width: 550px;
+            background: #2a1a0e;
+            padding: 35px 30px;
+            border-radius: 50px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), inset 0 0 0 2px #8b6b4a;
+            border: 3px solid #6b4f32;
+        }
+
+        .login-page h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #f0dbb0;
+            text-shadow: 0 4px 0 #6b4f32, 0 6px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .login-page .subtitle {
+            text-align: center;
+            color: #c9a87c;
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #4a3222;
+            padding-bottom: 10px;
+        }
+
+        .creator-info {
+            text-align: center;
+            color: #8b6b4a;
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            padding: 10px;
+            background: #1f110a;
+            border-radius: 15px;
+            border: 1px solid #4a3222;
+        }
+
+        .creator-info .name {
+            color: #f0dbb0;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .creator-info .channel-link {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .creator-info .channel-link:hover {
+            color: #81d4fa;
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #c9a87c;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 25px;
+            background: #1f110a;
+            color: #f0dbb0;
+            border: 2px solid #6b4f32;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            border-color: #c9a87c;
+        }
+
+        .form-group .hint {
+            color: #8b6b4a;
+            font-size: 0.75rem;
+            margin-top: 3px;
+            padding-right: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 3px 0;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #c9a87c;
+            font-weight: 400;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #c9a87c;
+            cursor: pointer;
+        }
+
+        .btn-start {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a0f08;
+            background: linear-gradient(145deg, #e8c99b, #c9a87c);
+            cursor: pointer;
+            box-shadow: 0 8px 0 #6b4f32, 0 8px 25px rgba(0, 0, 0, 0.5);
+            transition: 0.1s;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+
+        .btn-start:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #6b4f32;
+        }
+
+        .btn-start:hover {
+            background: linear-gradient(145deg, #f0dbb0, #d4b88a);
+        }
+
+        .rank-preview {
+            background: #1f110a;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 2px solid #4a3222;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .rank-preview span {
+            color: #8b6b4a;
+            font-size: 0.8rem;
+        }
+
+        .rank-preview .rank-value {
+            color: #f0dbb0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* ===== صفحه بازی ===== */
+        .game-page {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .game-page.active {
+            display: block;
+        }
+
+        .login-page.hidden {
+            display: none;
+        }
+
+        .game-container {
+            background: #2a1a0e;
+            padding: 18px;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 0 0 2px #8b6b4a;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 14px;
+            background: #1f110a;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            color: #f0dbb0;
+            border: 2px solid #8b6b4a;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-display {
+            background: #0f0a06;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 1rem;
+            border: 2px solid #c9a87c;
+            font-weight: 700;
+            min-width: 70px;
+            text-align: center;
+            color: #4fc3f7;
+            font-family: monospace;
+        }
+
+        .timer-display.warning {
+            color: #ff9800;
+            animation: blink 0.5s infinite;
+        }
+
+        .timer-display.danger {
+            color: #f44336;
+            animation: blink 0.3s infinite;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .turn-indicator {
+            background: #0f0a06;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            border: 2px solid #c9a87c;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .score-display {
+            background: #0f0a06;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 2px solid #c9a87c;
+        }
+
+        .btn-icon {
+            background: #c9a87c;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1a0f08;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6b4f32;
+            font-family: inherit;
+        }
+
+        .btn-icon:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #6b4f32;
+        }
+
+        .btn-back {
+            background: #6b4f32;
+            color: #f0dbb0;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #3a2a1a;
+            font-family: inherit;
+        }
+
+        .btn-back:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #3a2a1a;
+        }
+
+        .board-wrapper {
+            background: #4a3222;
+            padding: 12px;
+            border-radius: 30px;
+            box-shadow: inset 0 0 0 2px #8b6b4a;
+        }
+
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            padding: 5px;
+            border-radius: 18px;
+            aspect-ratio: 1/1;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.1s;
+        }
+
+        .theme-classic .cell-light { background: #f0d9b5; }
+        .theme-classic .cell-dark { background: #b58863; }
+        .theme-dark .cell-light { background: #4a4a5a; }
+        .theme-dark .cell-dark { background: #2a2a3a; }
+        .theme-green .cell-light { background: #a8d5a2; }
+        .theme-green .cell-dark { background: #5a8f4a; }
+        .theme-blue .cell-light { background: #b5d4e8; }
+        .theme-blue .cell-dark { background: #4a7a9a; }
+        .theme-wood .cell-light { background: #deb887; }
+        .theme-wood .cell-dark { background: #8b6b4a; }
+
+        .cell.selected {
+            background: #7fc97f !important;
+            box-shadow: inset 0 0 20px #2d8f2d;
+            transform: scale(0.93);
+        }
+
+        .cell.valid-move {
+            background: #a8d5a8 !important;
+            box-shadow: inset 0 0 15px #4caf50;
+        }
+
+        .cell.valid-capture {
+            background: #ff8a8a !important;
+            box-shadow: inset 0 0 20px #e53935;
+        }
+
+        .cell.last-move {
+            background: #ffd966 !important;
+        }
+
+        .piece {
+            font-size: 2.4rem;
+            line-height: 1;
+            filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.4));
+            pointer-events: none;
+        }
+
+        .bottom-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: space-between;
+        }
+
+        .captured-area {
+            display: flex;
+            gap: 10px;
+            background: #1f110a;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 2px solid #6b4f32;
+            flex: 1;
+            min-width: 120px;
+            flex-wrap: wrap;
+            font-size: 1.2rem;
+        }
+
+        .captured-area span {
+            color: #c9a87c;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 4px 12px;
+            color: #f0dbb0;
+            font-size: 0.9rem;
+            background: #1f110a;
+            border-radius: 20px;
+            border: 1px solid #6b4f32;
+            min-height: 32px;
+            flex: 2;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .footer-credit {
+            text-align: center;
+            color: #6b4f32;
+            font-size: 0.7rem;
+            margin-top: 10px;
+            padding: 5px;
+            border-top: 1px solid #4a3222;
+        }
+
+        .footer-credit a {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footer-credit a:hover {
+            text-decoration: underline;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .difficulty-easy {
+            background: #4caf50;
+            color: white;
+        }
+        .difficulty-medium {
+            background: #ff9800;
+            color: white;
+        }
+        .difficulty-hard {
+            background: #f44336;
+            color: white;
+        }
+
+        @media (max-width: 650px) {
+            .login-page { padding: 20px 15px; }
+            .login-page h1 { font-size: 2rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .cell { font-size: 1.8rem; }
+            .piece { font-size: 1.8rem; }
+            .header h1 { font-size: 1rem; }
+            .timer-display { font-size: 0.8rem; min-width: 55px; padding: 3px 8px; }
+            .turn-indicator { font-size: 0.7rem; min-width: 60px; padding: 3px 8px; }
+        }
+
+        @media (max-width: 420px) {
+            .cell { font-size: 1.3rem; }
+            .piece { font-size: 1.3rem; }
+            .header { flex-direction: column; align-items: stretch; }
+            .header-controls { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== صفحه ورود ===== -->
+    <div class="login-page" id="loginPage">
+        <h1>♚ شطرنج</h1>
+        <div class="subtitle">🎯 با تایمر و هوش مصنوعی حرفه‌ای</div>
+
+        <div class="creator-info">
+            <span class="name">✍️ ساخته شده توسط محمد حسین حبیبی راد</span><br>
+            <a href="#" onclick="window.open('https://eitaa.com/irandigital_python', '_blank'); return false;" class="channel-link">
+                📱 کانال ما در ایتا: @irandigital_python
+            </a>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <label>🎮 حالت بازی</label>
+                <select id="gameModeSelect">
+                    <option value="single">تک‌نفره (تمرین)</option>
+                    <option value="twoPlayer">دو نفره (محلی)</option>
+                    <option value="ai" selected>هوش مصنوعی</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="aiLevelGroup">
+                <label>🤖 سطح هوش مصنوعی</label>
+                <select id="aiLevelSelect">
+                    <option value="easy">🟢 آسان (حرکت‌های تصادفی)</option>
+                    <option value="medium" selected>🟡 متوسط (امتیازدهی)</option>
+                    <option value="hard">🔴 سخت (جستجوی عمق ۳ + تکنیک‌های حرفه‌ای)</option>
+                </select>
+                <div class="hint">💡 سطح سخت: امتیازدهی پیشرفته + جستجوی عمق ۳ + تکنیک‌های شطرنج</div>
+            </div>
+
+            <div class="form-group">
+                <label>⏱️ زمان هر بازیکن (دقیقه)</label>
+                <select id="timeSelect">
+                    <option value="0">نامحدود</option>
+                    <option value="1">۱ دقیقه</option>
+                    <option value="5" selected>۵ دقیقه</option>
+                    <option value="10">۱۰ دقیقه</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🎨 تم تخته</label>
+                <select id="themeSelect">
+                    <option value="classic">کلاسیک (چوبی)</option>
+                    <option value="dark">تاریک</option>
+                    <option value="green">سبز</option>
+                    <option value="blue">آبی</option>
+                    <option value="wood">چوب تیره</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>🔊 صداها</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="soundCheck" checked> صدا</label>
+                        <label><input type="checkbox" id="musicCheck" checked> موسیقی</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>🎆 افکت‌ها</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="rocketCheck" checked> موشک</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rank-preview">
+                <span>🏅 رتبه شما</span>
+                <span class="rank-value" id="rankPreviewValue">مبتدی</span>
+                <span style="color:#8b6b4a;">امتیاز: <span id="rankScorePreview">۰</span></span>
+            </div>
+
+            <button class="btn-start" onclick="startGame()">
+                🚀 شروع بازی
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== صفحه بازی ===== -->
+    <div class="game-page" id="gamePage">
+        <div class="game-container">
+            <div class="header">
+                <h1>♚ شطرنج</h1>
+                <div class="header-controls">
+                    <div class="timer-display" id="timerDisplay">⏱️ ∞</div>
+                    <div class="turn-indicator" id="turnIndicator">♔ سفید</div>
+                    <div class="score-display" id="scoreDisplay">🏆 ۰ - ۰</div>
+                    <button class="btn-icon" onclick="resetGame()">⟳ نو</button>
+                    <button class="btn-back" onclick="goBack()">✖</button>
+                </div>
+            </div>
+
+            <div class="board-wrapper">
+                <div class="chessboard theme-classic" id="chessboard"></div>
+            </div>
+
+            <div class="bottom-panel">
+                <div class="captured-area" id="capturedWhite">
+                    <span>🟤 سفید:</span>
+                </div>
+                <div class="captured-area" id="capturedBlack">
+                    <span>⚫ سیاه:</span>
+                </div>
+            </div>
+            <div class="status-message" id="statusMessage">♟ شروع بازی · سفید شروع می‌کند</div>
+
+            <div class="footer-credit">
+                ✍️ ساخته شده توسط محمد حسین حبیبی راد &nbsp;|&nbsp;
+                <a href="#" onclick="window.open('https://eitaa.com/irandigital_python', '_blank'); return false;">📱 @irandigital_python</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  کلاس مهره
+        // ================================================================
+        class Piece {
+            constructor(type, color) {
+                this.type = type;
+                this.color = color;
+            }
+
+            getSymbol() {
+                const symbols = {
+                    'white': { 'king': '♔', 'queen': '♕', 'rook': '♖', 'bishop': '♗', 'knight': '♘', 'pawn': '♙' },
+                    'black': { 'king': '♚', 'queen': '♛', 'rook': '♜', 'bishop': '♝', 'knight': '♞', 'pawn': '♟' }
+                };
+                return symbols[this.color][this.type] || '?';
+            }
+
+            getUnicode() {
+                return this.getSymbol();
+            }
+        }
+
+        // ================================================================
+        //  کلاس بازی با تمام قوانین و تایمر
+        // ================================================================
+        class ChessGame {
+            constructor(timeLimit = 0) {
+                this.board = [];
+                this.turn = 'white';
+                this.selected = null;
+                this.validMoves = [];
+                this.capturedWhite = [];
+                this.capturedBlack = [];
+                this.scoreWhite = 0;
+                this.scoreBlack = 0;
+                this.gameOver = false;
+                this.lastMove = null;
+                this.enPassantTarget = null;
+                this.castlingRights = {
+                    white: { kingSide: true, queenSide: true },
+                    black: { kingSide: true, queenSide: true }
+                };
+                this.kingPositions = {
+                    white: { row: 7, col: 4 },
+                    black: { row: 0, col: 4 }
+                };
+                this.moveHistory = [];
+
+                // تایمر
+                this.timeLimit = timeLimit; // دقیقه
+                this.whiteTime = timeLimit * 60; // ثانیه
+                this.blackTime = timeLimit * 60;
+                this.timerInterval = null;
+                this.gameStarted = false;
+
+                this.initBoard();
+            }
+
+            initBoard() {
+                const backRank = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+                this.board = Array(8).fill().map(() => Array(8).fill(null));
+
+                for (let c = 0; c < 8; c++) {
+                    this.board[0][c] = new Piece(backRank[c], 'black');
+                    this.board[1][c] = new Piece('pawn', 'black');
+                    this.board[6][c] = new Piece('pawn', 'white');
+                    this.board[7][c] = new Piece(backRank[c], 'white');
+                }
+
+                this.turn = 'white';
+                this.selected = null;
+                this.validMoves = [];
+                this.capturedWhite = [];
+                this.capturedBlack = [];
+                this.scoreWhite = 0;
+                this.scoreBlack = 0;
+                this.gameOver = false;
+                this.lastMove = null;
+                this.enPassantTarget = null;
+                this.castlingRights = {
+                    white: { kingSide: true, queenSide: true },
+                    black: { kingSide: true, queenSide: true }
+                };
+                this.kingPositions = {
+                    white: { row: 7, col: 4 },
+                    black: { row: 0, col: 4 }
+                };
+                this.moveHistory = [];
+                this.gameStarted = false;
+
+                if (this.timeLimit > 0) {
+                    this.whiteTime = this.timeLimit * 60;
+                    this.blackTime = this.timeLimit * 60;
+                }
+            }
+
+            inBounds(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+            isEnemy(r, c, color) {
+                const p = this.board[r][c];
+                return p && p.color !== color;
+            }
+
+            isFriend(r, c, color) {
+                const p = this.board[r][c];
+                return p && p.color === color;
+            }
+
+            findKing(color) {
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.board[r][c];
+                        if (p && p.type === 'king' && p.color === color) {
+                            return { row: r, col: c };
+                        }
+                    }
+                }
+                return null;
+            }
+
+            isUnderAttack(row, col, byColor) {
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.board[r][c];
+                        if (p && p.color === byColor) {
+                            const moves = this.getRawMoves(r, c);
+                            for (const m of moves) {
+                                if (m.row === row && m.col === col) return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            isKingInCheck(color) {
+                const king = this.findKing(color);
+                if (!king) return false;
+                const enemy = color === 'white' ? 'black' : 'white';
+                return this.isUnderAttack(king.row, king.col, enemy);
+            }
+
+            simulateMove(fromRow, fromCol, toRow, toCol) {
+                const piece = this.board[fromRow][fromCol];
+                const captured = this.board[toRow][toCol];
+                this.board[toRow][toCol] = piece;
+                this.board[fromRow][fromCol] = null;
+
+                if (piece && piece.type === 'king') {
+                    this.kingPositions[piece.color] = { row: toRow, col: toCol };
+                }
+
+                let epCaptured = null;
+                if (piece && piece.type === 'pawn' && this.enPassantTarget) {
+                    if (toRow === this.enPassantTarget.row && toCol === this.enPassantTarget.col) {
+                        const epRow = piece.color === 'white' ? toRow + 1 : toRow - 1;
+                        epCaptured = this.board[epRow][toCol];
+                        this.board[epRow][toCol] = null;
+                    }
+                }
+
+                return { captured, epCaptured };
+            }
+
+            undoSimulate(fromRow, fromCol, toRow, toCol, captured, epCaptured) {
+                const piece = this.board[toRow][toCol];
+                this.board[fromRow][fromCol] = piece;
+                this.board[toRow][toCol] = captured;
+
+                if (piece && piece.type === 'king') {
+                    this.kingPositions[piece.color] = { row: fromRow, col: fromCol };
+                }
+
+                if (epCaptured) {
+                    const epRow = piece.color === 'white' ? toRow + 1 : toRow - 1;
+                    this.board[epRow][toCol] = epCaptured;
+                }
+            }
+
+            getRawMoves(row, col) {
+                const piece = this.board[row][col];
+                if (!piece) return [];
+                const moves = [];
+                const { type, color } = piece;
+                const enemy = color === 'white' ? 'black' : 'white';
+                const dir = color === 'white' ? -1 : 1;
+
+                const addMove = (r, c) => {
+                    if (this.inBounds(r, c) && !this.isFriend(r, c, color)) {
+                        moves.push({ row: r, col: c });
+                        return true;
+                    }
+                    return false;
+                };
+
+                const addSliding = (dr, dc) => {
+                    let r = row + dr,
+                        c = col + dc;
+                    while (this.inBounds(r, c)) {
+                        if (this.isFriend(r, c, color)) break;
+                        moves.push({ row: r, col: c });
+                        if (this.isEnemy(r, c, color)) break;
+                        r += dr;
+                        c += dc;
+                    }
+                };
+
+                switch (type) {
+                    case 'pawn': {
+                        const startRow = color === 'white' ? 6 : 1;
+                        if (this.inBounds(row + dir, col) && !this.board[row + dir][col]) {
+                            moves.push({ row: row + dir, col });
+                            if (row === startRow && !this.board[row + 2 * dir][col]) {
+                                moves.push({ row: row + 2 * dir, col });
+                            }
+                        }
+                        for (const dc of [-1, 1]) {
+                            const nr = row + dir,
+                                nc = col + dc;
+                            if (this.inBounds(nr, nc)) {
+                                if (this.isEnemy(nr, nc, color)) {
+                                    moves.push({ row: nr, col: nc });
+                                }
+                                if (this.enPassantTarget &&
+                                    nr === this.enPassantTarget.row &&
+                                    nc === this.enPassantTarget.col) {
+                                    moves.push({ row: nr, col: nc });
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    case 'knight': {
+                        const offsets = [
+                            [-2, -1],
+                            [-2, 1],
+                            [-1, -2],
+                            [-1, 2],
+                            [1, -2],
+                            [1, 2],
+                            [2, -1],
+                            [2, 1]
+                        ];
+                        for (const [dr, dc] of offsets) {
+                            const nr = row + dr,
+                                nc = col + dc;
+                            if (this.inBounds(nr, nc) && !this.isFriend(nr, nc, color)) {
+                                moves.push({ row: nr, col: nc });
+                            }
+                        }
+                        break;
+                    }
+
+                    case 'bishop': {
+                        addSliding(1, 1);
+                        addSliding(1, -1);
+                        addSliding(-1, 1);
+                        addSliding(-1, -1);
+                        break;
+                    }
+
+                    case 'rook': {
+                        addSliding(1, 0);
+                        addSliding(-1, 0);
+                        addSliding(0, 1);
+                        addSliding(0, -1);
+                        break;
+                    }
+
+                    case 'queen': {
+                        addSliding(1, 0);
+                        addSliding(-1, 0);
+                        addSliding(0, 1);
+                        addSliding(0, -1);
+                        addSliding(1, 1);
+                        addSliding(1, -1);
+                        addSliding(-1, 1);
+                        addSliding(-1, -1);
+                        break;
+                    }
+
+                    case 'king': {
+                        for (let dr = -1; dr <= 1; dr++) {
+                            for (let dc = -1; dc <= 1; dc++) {
+                                if (dr === 0 && dc === 0) continue;
+                                const nr = row + dr,
+                                    nc = col + dc;
+                                if (this.inBounds(nr, nc) && !this.isFriend(nr, nc, color)) {
+                                    moves.push({ row: nr, col: nc });
+                                }
+                            }
+                        }
+
+                        const rights = this.castlingRights[color];
+                        const kingRow = color === 'white' ? 7 : 0;
+                        if (row === kingRow && col === 4) {
+                            if (rights.kingSide) {
+                                if (!this.board[kingRow][5] && !this.board[kingRow][6] &&
+                                    this.board[kingRow][7] && this.board[kingRow][7].type === 'rook' &&
+                                    this.board[kingRow][7].color === color) {
+                                    if (!this.isUnderAttack(kingRow, 4, enemy) &&
+                                        !this.isUnderAttack(kingRow, 5, enemy) &&
+                                        !this.isUnderAttack(kingRow, 6, enemy)) {
+                                        moves.push({ row: kingRow, col: 6, castling: 'kingSide' });
+                                    }
+                                }
+                            }
+                            if (rights.queenSide) {
+                                if (!this.board[kingRow][1] && !this.board[kingRow][2] && !this.board[kingRow][3] &&
+                                    this.board[kingRow][0] && this.board[kingRow][0].type === 'rook' &&
+                                    this.board[kingRow][0].color === color) {
+                                    if (!this.isUnderAttack(kingRow, 4, enemy) &&
+                                        !this.isUnderAttack(kingRow, 3, enemy) &&
+                                        !this.isUnderAttack(kingRow, 2, enemy)) {
+                                        moves.push({ row: kingRow, col: 2, castling: 'queenSide' });
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                return moves;
+            }
+
+            getLegalMoves(row, col) {
+                const piece = this.board[row][col];
+                if (!piece) return [];
+                const rawMoves = this.getRawMoves(row, col);
+                const legal = [];
+
+                for (const move of rawMoves) {
+                    const { captured, epCaptured } = this.simulateMove(row, col, move.row, move.col);
+                    const inCheck = this.isKingInCheck(piece.color);
+                    this.undoSimulate(row, col, move.row, move.col, captured, epCaptured);
+                    if (!inCheck) {
+                        legal.push(move);
+                    }
+                }
+                return legal;
+            }
+
+            makeMove(fromRow, fromCol, toRow, toCol) {
+                const piece = this.board[fromRow][fromCol];
+                if (!piece) return false;
+
+                const legalMoves = this.getLegalMoves(fromRow, fromCol);
+                const move = legalMoves.find(m => m.row === toRow && m.col === toCol);
+                if (!move) return false;
+
+                const captured = this.board[toRow][toCol];
+                const isEnPassant = this.enPassantTarget &&
+                    toRow === this.enPassantTarget.row &&
+                    toCol === this.enPassantTarget.col;
+
+                this.board[toRow][toCol] = piece;
+                this.board[fromRow][fromCol] = null;
+
+                if (piece.type === 'king') {
+                    this.kingPositions[piece.color] = { row: toRow, col: toCol };
+                    this.castlingRights[piece.color].kingSide = false;
+                    this.castlingRights[piece.color].queenSide = false;
+                }
+
+                if (move.castling) {
+                    const row = piece.color === 'white' ? 7 : 0;
+                    if (toCol === 6) {
+                        this.board[row][5] = this.board[row][7];
+                        this.board[row][7] = null;
+                    } else if (toCol === 2) {
+                        this.board[row][3] = this.board[row][0];
+                        this.board[row][0] = null;
+                    }
+                }
+
+                let epCaptured = null;
+                if (isEnPassant) {
+                    const epRow = piece.color === 'white' ? toRow + 1 : toRow - 1;
+                    epCaptured = this.board[epRow][toCol];
+                    this.board[epRow][toCol] = null;
+                }
+
+                this.enPassantTarget = null;
+                if (piece.type === 'pawn' && Math.abs(toRow - fromRow) === 2) {
+                    this.enPassantTarget = { row: (fromRow + toRow) / 2, col: fromCol };
+                }
+
+                if (piece.type === 'rook') {
+                    if (fromRow === 7 && fromCol === 0) this.castlingRights.white.queenSide = false;
+                    if (fromRow === 7 && fromCol === 7) this.castlingRights.white.kingSide = false;
+                    if (fromRow === 0 && fromCol === 0) this.castlingRights.black.queenSide = false;
+                    if (fromRow === 0 && fromCol === 7) this.castlingRights.black.kingSide = false;
+                }
+                if (toRow === 7 && toCol === 0) this.castlingRights.white.queenSide = false;
+                if (toRow === 7 && toCol === 7) this.castlingRights.white.kingSide = false;
+                if (toRow === 0 && toCol === 0) this.castlingRights.black.queenSide = false;
+                if (toRow === 0 && toCol === 7) this.castlingRights.black.kingSide = false;
+
+                const capturedPiece = captured || epCaptured;
+                if (capturedPiece) {
+                    const value = { 'pawn': 1, 'knight': 3, 'bishop': 3, 'rook': 5, 'queen': 9, 'king': 0 };
+                    const pts = value[capturedPiece.type] || 0;
+                    if (capturedPiece.color === 'white') {
+                        this.scoreBlack += pts;
+                        this.capturedBlack.push(capturedPiece);
+                    } else {
+                        this.scoreWhite += pts;
+                        this.capturedWhite.push(capturedPiece);
+                    }
+                }
+
+                if (piece.type === 'pawn') {
+                    if ((piece.color === 'white' && toRow === 0) ||
+                        (piece.color === 'black' && toRow === 7)) {
+                        this.board[toRow][toCol] = new Piece('queen', piece.color);
+                    }
+                }
+
+                this.moveHistory.push({ from: { row: fromRow, col: fromCol }, to: { row: toRow, col: toCol } });
+                this.turn = this.turn === 'white' ? 'black' : 'white';
+                this.lastMove = { from: { row: fromRow, col: fromCol }, to: { row: toRow, col: toCol } };
+                this.selected = null;
+                this.validMoves = [];
+
+                this.checkGameOver();
+                return true;
+            }
+
+            checkGameOver() {
+                const king = this.findKing(this.turn);
+                if (!king) {
+                    this.gameOver = true;
+                    return;
+                }
+
+                let hasLegalMove = false;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.board[r][c];
+                        if (p && p.color === this.turn) {
+                            const moves = this.getLegalMoves(r, c);
+                            if (moves.length > 0) {
+                                hasLegalMove = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (hasLegalMove) break;
+                }
+
+                if (!hasLegalMove) {
+                    this.gameOver = true;
+                }
+            }
+
+            getState() {
+                return {
+                    board: this.board,
+                    turn: this.turn,
+                    selected: this.selected,
+                    validMoves: this.validMoves,
+                    gameOver: this.gameOver,
+                    lastMove: this.lastMove,
+                    capturedWhite: this.capturedWhite,
+                    capturedBlack: this.capturedBlack,
+                    scoreWhite: this.scoreWhite,
+                    scoreBlack: this.scoreBlack,
+                    whiteTime: this.whiteTime,
+                    blackTime: this.blackTime
+                };
+            }
+
+            selectCell(row, col) {
+                if (this.gameOver) return;
+
+                const piece = this.board[row][col];
+
+                if (this.selected) {
+                    if (this.selected.row === row && this.selected.col === col) {
+                        this.selected = null;
+                        this.validMoves = [];
+                        return;
+                    }
+
+                    const success = this.makeMove(this.selected.row, this.selected.col, row, col);
+                    if (success) {
+                        this.selected = null;
+                        this.validMoves = [];
+                        return;
+                    }
+
+                    if (piece && piece.color === this.turn) {
+                        this.selected = { row, col };
+                        this.validMoves = this.getLegalMoves(row, col);
+                        return;
+                    }
+
+                    this.selected = null;
+                    this.validMoves = [];
+                    return;
+                }
+
+                if (piece && piece.color === this.turn) {
+                    this.selected = { row, col };
+                    this.validMoves = this.getLegalMoves(row, col);
+                }
+            }
+
+            // ================================================================
+            //  هوش مصنوعی حرفه‌ای با تکنیک‌های پیشرفته
+            // ================================================================
+
+            getAllMoves(color) {
+                const moves = [];
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.board[r][c];
+                        if (p && p.color === color) {
+                            const legal = this.getLegalMoves(r, c);
+                            for (const m of legal) {
+                                moves.push({ fromRow: r, fromCol: c, toRow: m.row, toCol: m.col, moveType: m.castling ?
+                                        'castling' : 'normal' });
+                            }
+                        }
+                    }
+                }
+                return moves;
+            }
+
+            // ارزیابی پیشرفته موقعیت
+            evaluateBoard() {
+                const pieceValues = { 'pawn': 10, 'knight': 30, 'bishop': 32, 'rook': 50, 'queen': 90, 'king': 900 };
+                let score = 0;
+
+                // امتیاز مهره‌ها
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.board[r][c];
+                        if (p) {
+                            const v = pieceValues[p.type] || 0;
+                            // امتیاز ویژه برای موقعیت
+                            let posBonus = 0;
+                            if (p.type === 'pawn') {
+                                // سربازهای جلوتر ارزش بیشتری دارند
+                                posBonus = p.color === 'white' ? (7 - r) * 1.5 : r * 1.5;
+                            }
+                            if (p.type === 'knight' || p.type === 'bishop') {
+                                // مهره‌های سبک در مرکز ارزش بیشتری دارند
+                                const centerDist = Math.abs(r - 3.5) + Math.abs(c - 3.5);
+                                posBonus = (7 - centerDist) * 1.5;
+                            }
+                            if (p.type === 'king') {
+                                // در اواخر بازی شاه ارزش دفاعی دارد
+                                if (this.moveHistory.length > 30) {
+                                    posBonus = p.color === 'white' ? (7 - r) * 2 : r * 2;
+                                }
+                            }
+                            score += (p.color === 'white' ? v + posBonus : -(v + posBonus));
+                        }
+                    }
+                }
+
+                // امتیاز برای کنترل مرکز
+                const centerSquares = [
+                    [3, 3],
+                    [3, 4],
+                    [4, 3],
+                    [4, 4]
+                ];
+                for (const [r, c] of centerSquares) {
+                    const p = this.board[r][c];
+                    if (p) {
+                        score += (p.color === 'white' ? 5 : -5);
+                    }
+                }
+
+                return score;
+            }
+
+            // ===== سطح آسان: حرکت تصادفی =====
+            makeEasyMove() {
+                if (this.gameOver) return null;
+                const moves = this.getAllMoves(this.turn);
+                if (moves.length === 0) return null;
+                return moves[Math.floor(Math.random() * moves.length)];
+            }
+
+            // ===== سطح متوسط: امتیازدهی پیشرفته =====
+            makeMediumMove() {
+                if (this.gameOver) return null;
+                const color = this.turn;
+                const moves = this.getAllMoves(color);
+                if (moves.length === 0) return null;
+
+                let bestMove = null;
+                let bestScore = -Infinity;
+
+                // نگاه به حرکات با اولویت
+                for (const m of moves) {
+                    // گرفتن مهره اولویت بالایی دارد
+                    const targetPiece = this.board[m.toRow][m.toCol];
+                    let moveScore = 0;
+
+                    if (targetPiece) {
+                        const pieceValues = { 'pawn': 10, 'knight': 30, 'bishop': 32, 'rook': 50, 'queen': 90 };
+                        moveScore += pieceValues[targetPiece.type] || 0;
+                    }
+
+                    // شبیه‌سازی و امتیازدهی
+                    const { captured, epCaptured } = this.simulateMove(m.fromRow, m.fromCol, m.toRow, m.toCol);
+                    const positionScore = this.evaluateBoard();
+                    this.undoSimulate(m.fromRow, m.fromCol, m.toRow, m.toCol, captured, epCaptured);
+
+                    const totalScore = positionScore + moveScore * 2;
+
+                    if (totalScore > bestScore) {
+                        bestScore = totalScore;
+                        bestMove = m;
+                    }
+                }
+
+                return bestMove;
+            }
+
+            // ===== سطح سخت: جستجوی عمق ۳ با تکنیک‌های حرفه‌ای =====
+            makeHardMove() {
+                if (this.gameOver) return null;
+                const color = this.turn;
+                const moves = this.getAllMoves(color);
+                if (moves.length === 0) return null;
+
+                let bestMove = null;
+                let bestScore = -Infinity;
+
+                // مرتب‌سازی حرکات بر اساس گرفتن مهره (برای افزایش سرعت)
+                const sortedMoves = moves.sort((a, b) => {
+                    const aTarget = this.board[a.toRow][a.toCol];
+                    const bTarget = this.board[b.toRow][b.toCol];
+                    const aVal = aTarget ? 1 : 0;
+                    const bVal = bTarget ? 1 : 0;
+                    return bVal - aVal;
+                });
+
+                // فقط ۲۰ حرکت اول را بررسی کن (بهینه‌سازی سرعت)
+                const topMoves = sortedMoves.slice(0, 20);
+
+                for (const m of topMoves) {
+                    const { captured, epCaptured } = this.simulateMove(m.fromRow, m.fromCol, m.toRow, m.toCol);
+
+                    // عمق ۲: نوبت حریف
+                    const enemy = color === 'white' ? 'black' : 'white';
+                    const enemyMoves = this.getAllMoves(enemy);
+                    let worstScore = Infinity;
+
+                    if (enemyMoves.length > 0) {
+                        // فقط ۱۰ حرکت اول حریف را بررسی کن
+                        const topEnemyMoves = enemyMoves.slice(0, 10);
+                        for (const em of topEnemyMoves) {
+                            const { captured: eCaptured, epCaptured: eEp } =
+                                this.simulateMove(em.fromRow, em.fromCol, em.toRow, em.toCol);
+
+                            // عمق ۳: نوبت خودمان
+                            const ourColor = color;
+                            const ourMoves = this.getAllMoves(ourColor);
+                            let bestOurScore = -Infinity;
+
+                            if (ourMoves.length > 0) {
+                                // فقط ۸ حرکت اول خودمان را بررسی کن
+                                const topOurMoves = ourMoves.slice(0, 8);
+                                for (const om of topOurMoves) {
+                                    const { captured: oCaptured, epCaptured: oEp } =
+                                        this.simulateMove(om.fromRow, om.fromCol, om.toRow, om.toCol);
+                                    const sc = this.evaluateBoard();
+                                    this.undoSimulate(om.fromRow, om.fromCol, om.toRow, om.toCol, oCaptured, oEp);
+                                    if (sc > bestOurScore) bestOurScore = sc;
+                                }
+                            } else {
+                                bestOurScore = this.evaluateBoard();
+                            }
+
+                            this.undoSimulate(em.fromRow, em.fromCol, em.toRow, em.toCol, eCaptured, eEp);
+
+                            if (bestOurScore < worstScore) {
+                                worstScore = bestOurScore;
+                            }
+                        }
+                    } else {
+                        worstScore = this.evaluateBoard();
+                    }
+
+                    this.undoSimulate(m.fromRow, m.fromCol, m.toRow, m.toCol, captured, epCaptured);
+
+                    // امتیاز نهایی با وزن‌دهی
+                    const finalScore = worstScore;
+
+                    if (finalScore > bestScore) {
+                        bestScore = finalScore;
+                        bestMove = m;
+                    }
+                }
+
+                // اگر حرکت خوبی پیدا نشد، بهترین حرکت از بین همه
+                if (!bestMove && moves.length > 0) {
+                    bestMove = moves[0];
+                }
+
+                return bestMove;
+            }
+
+            makeAIMove(level) {
+                if (this.gameOver) return false;
+
+                let bestMove = null;
+
+                try {
+                    switch (level) {
+                        case 'easy':
+                            bestMove = this.makeEasyMove();
+                            break;
+                        case 'medium':
+                            bestMove = this.makeMediumMove();
+                            break;
+                        case 'hard':
+                            bestMove = this.makeHardMove();
+                            break;
+                        default:
+                            bestMove = this.makeMediumMove();
+                    }
+                } catch (e) {
+                    console.error('AI Error:', e);
+                    bestMove = this.makeEasyMove();
+                }
+
+                if (bestMove) {
+                    this.makeMove(bestMove.fromRow, bestMove.fromCol, bestMove.toRow, bestMove.toCol);
+                    return true;
+                }
+                return false;
+            }
+
+            // ===== تایمر =====
+            startTimer() {
+                if (this.timeLimit === 0 || this.gameStarted) return;
+                this.gameStarted = true;
+                this.timerInterval = setInterval(() => {
+                    if (this.gameOver) {
+                        clearInterval(this.timerInterval);
+                        return;
+                    }
+
+                    if (this.turn === 'white') {
+                        this.whiteTime--;
+                        if (this.whiteTime <= 0) {
+                            this.whiteTime = 0;
+                            this.gameOver = true;
+                            clearInterval(this.timerInterval);
+                            // برنده سیاه
+                            this.scoreBlack += 10;
+                            // نمایش پیام
+                        }
+                    } else {
+                        this.blackTime--;
+                        if (this.blackTime <= 0) {
+                            this.blackTime = 0;
+                            this.gameOver = true;
+                            clearInterval(this.timerInterval);
+                            // برنده سفید
+                            this.scoreWhite += 10;
+                        }
+                    }
+                    updateTimerDisplay();
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+        }
+
+        // ================================================================
+        //  کنترلر بازی
+        // ================================================================
+
+        let game = null;
+        let gameMode = 'ai';
+        let aiLevel = 'medium';
+        let currentTheme = 'classic';
+        let soundEnabled = true;
+        let musicEnabled = true;
+        let rocketEffectEnabled = true;
+        let rankScore = 0;
+        let rankTitle = 'مبتدی';
+        let timeLimit = 5;
+
+        const loginPage = document.getElementById('loginPage');
+        const gamePage = document.getElementById('gamePage');
+        const boardEl = document.getElementById('chessboard');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const statusMessage = document.getElementById('statusMessage');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        // ===== صدا با Web Audio API =====
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Web Audio not supported');
+                }
+            }
+        }
+
+        function playTone(freq, duration, type = 'sine', volume = 0.3) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) { /* ignore */ }
+        }
+
+        function playMoveSound() {
+            playTone(500, 0.08, 'sine', 0.2);
+            setTimeout(() => playTone(600, 0.08, 'sine', 0.15), 50);
+        }
+
+        function playCheckSound() {
+            playTone(800, 0.15, 'square', 0.15);
+            setTimeout(() => playTone(1000, 0.15, 'square', 0.1), 150);
+        }
+
+        function playWinSound() {
+            playTone(523, 0.2);
+            setTimeout(() => playTone(659, 0.2), 150);
+            setTimeout(() => playTone(784, 0.3), 300);
+            setTimeout(() => playTone(1047, 0.4), 500);
+        }
+
+        function playLoseSound() {
+            playTone(400, 0.3, 'sawtooth', 0.15);
+            setTimeout(() => playTone(300, 0.4, 'sawtooth', 0.15), 300);
+        }
+
+        // ===== موسیقی پس‌زمینه =====
+        let musicInterval = null;
+        let musicNotes = [523, 587, 659, 784, 880, 784, 659, 587];
+        let musicIndex = 0;
+
+        function startMusic() {
+            if (musicInterval) return;
+            if (!musicEnabled) return;
+            musicInterval = setInterval(() => {
+                if (!musicEnabled) return;
+                playTone(musicNotes[musicIndex % musicNotes.length], 0.1, 'sine', 0.05);
+                musicIndex++;
+            }, 400);
+        }
+
+        function stopMusic() {
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+                musicIndex = 0;
+            }
+        }
+
+        // ===== رتبه =====
+        function updateRank() {
+            if (rankScore < 10) rankTitle = 'مبتدی';
+            else if (rankScore < 25) rankTitle = 'آماتور';
+            else if (rankScore < 50) rankTitle = 'حرفه‌ای';
+            else if (rankScore < 80) rankTitle = 'استاد';
+            else rankTitle = 'افسانه';
+            document.getElementById('rankPreviewValue').textContent = rankTitle;
+            document.getElementById('rankScorePreview').textContent = rankScore;
+        }
+
+        // ===== افکت موشک =====
+        function fireRocketEffect() {
+            if (!rocketEffectEnabled) return;
+            const container = document.createElement('div');
+            container.style.cssText =
+                'position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;overflow:hidden;';
+            document.body.appendChild(container);
+
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#ffd93d', '#ff4757'];
+            for (let i = 0; i < 15; i++) {
+                const rocket = document.createElement('div');
+                rocket.style.cssText =
+                    `position:absolute;font-size:${2 + Math.random() * 3}rem;left:${Math.random() * 90}%;animation:rocketLaunch 1.8s ease-out forwards;animation-delay:${Math.random() * 0.6}s;`;
+                rocket.textContent = ['🚀', '🎆', '✨', '💥', '🎇', '🌟', '⭐', '🔥'][Math.floor(Math.random() * 8)];
+                container.appendChild(rocket);
+            }
+            for (let i = 0; i < 40; i++) {
+                const fw = document.createElement('div');
+                const size = 5 + Math.random() * 25;
+                fw.style.cssText =
+                    `position:absolute;border-radius:50%;left:${Math.random() * 100}%;top:${Math.random() * 100}%;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random() * colors.length)]};animation:fireworkBurst 1.2s ease-out forwards;animation-delay:${Math.random() * 0.8}s;box-shadow:0 0 20px ${colors[Math.floor(Math.random() * colors.length)]};`;
+                container.appendChild(fw);
+            }
+
+            if (!document.getElementById('rocketKeyframes')) {
+                const style = document.createElement('style');
+                style.id = 'rocketKeyframes';
+                style.textContent = `
+                            @keyframes rocketLaunch {
+                                0% { transform: translateY(100vh) scale(0.3); opacity: 1; }
+                                40% { transform: translateY(20vh) scale(1.3) rotate(5deg); opacity: 1; }
+                                80% { transform: translateY(-5vh) scale(1.5) rotate(-5deg); opacity: 1; }
+                                100% { transform: translateY(-30vh) scale(0.5) rotate(-15deg); opacity: 0; }
+                            }
+                            @keyframes fireworkBurst {
+                                0% { transform: scale(0); opacity: 1; }
+                                100% { transform: scale(4); opacity: 0; }
+                            }
+                        `;
+                document.head.appendChild(style);
+            }
+
+            setTimeout(() => container.remove(), 3000);
+        }
+
+        // ===== تایمر =====
+        function updateTimerDisplay() {
+            if (!game) return;
+            const state = game.getState();
+            if (game.timeLimit === 0) {
+                timerDisplay.textContent = '⏱️ ∞';
+                timerDisplay.className = 'timer-display';
+                return;
+            }
+
+            const time = state.turn === 'white' ? state.whiteTime : state.blackTime;
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timerDisplay.textContent = `⏱️ ${timeStr}`;
+
+            // هشدار
+            timerDisplay.className = 'timer-display';
+            if (time < 30 && time > 10) {
+                timerDisplay.classList.add('warning');
+            } else if (time <= 10) {
+                timerDisplay.classList.add('danger');
+            }
+        }
+
+        // ===== رندر =====
+        function render() {
+            if (!game) return;
+            const state = game.getState();
+            const board = state.board;
+
+            boardEl.className = `chessboard theme-${currentTheme}`;
+            boardEl.innerHTML = '';
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const cell = document.createElement('div');
+                    const isLight = (r + c) % 2 === 0;
+                    cell.className = `cell ${isLight ? 'cell-light' : 'cell-dark'}`;
+
+                    if (state.selected && state.selected.row === r && state.selected.col === c) {
+                        cell.classList.add('selected');
+                    }
+
+                    if (state.validMoves.some(m => m.row === r && m.col === c)) {
+                        const isCapture = board[r][c] !== null;
+                        cell.classList.add(isCapture ? 'valid-capture' : 'valid-move');
+                    }
+
+                    if (state.lastMove) {
+                        if ((state.lastMove.from.row === r && state.lastMove.from.col === c) ||
+                            (state.lastMove.to.row === r && state.lastMove.to.col === c)) {
+                            cell.classList.add('last-move');
+                        }
+                    }
+
+                    const piece = board[r][c];
+                    if (piece) {
+                        const span = document.createElement('span');
+                        span.className = 'piece';
+                        span.textContent = piece.getUnicode();
+                        cell.appendChild(span);
+                    }
+
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', () => {
+                        if (state.gameOver) return;
+                        if (gameMode === 'ai' && game.turn === 'black') return;
+
+                        game.selectCell(r, c);
+                        render();
+
+                        if (!game.gameOver && gameMode === 'ai' && game.turn === 'black') {
+                            setTimeout(() => {
+                                const moved = game.makeAIMove(aiLevel);
+                                render();
+                                if (game.gameOver) handleGameOver();
+                                if (!game.gameOver && gameMode === 'ai' && game.turn === 'black') {
+                                    setTimeout(() => {
+                                        game.makeAIMove(aiLevel);
+                                        render();
+                                        if (game.gameOver) handleGameOver();
+                                    }, 200);
+                                }
+                            }, 250);
+                        }
+                        if (game.gameOver) handleGameOver();
+                    });
+
+                    boardEl.appendChild(cell);
+                }
+            }
+
+            const turnText = state.turn === 'white' ? '♔ سفید' : '♚ سیاه';
+            turnIndicator.textContent = state.gameOver ? '🏁 پایان' : turnText;
+            scoreDisplay.textContent = `🏆 ${state.scoreWhite} - ${state.scoreBlack}`;
+
+            document.getElementById('capturedWhite').innerHTML = `<span>🟤 سفید:</span> ` +
+                state.capturedWhite.map(p => p.getUnicode()).join(' ');
+            document.getElementById('capturedBlack').innerHTML = `<span>⚫ سیاه:</span> ` +
+                state.capturedBlack.map(p => p.getUnicode()).join(' ');
+
+            // وضعیت
+            let statusText = '';
+            if (state.gameOver) {
+                if (state.whiteTime <= 0 || state.blackTime <= 0) {
+                    const winner = state.whiteTime <= 0 ? 'سیاه' : 'سفید';
+                    statusText = `⏱️ زمان تمام شد! برنده: ${winner}`;
+                } else {
+                    const winner = game.turn === 'white' ? 'سیاه' : 'سفید';
+                    if (game.isKingInCheck(game.turn)) {
+                        statusText = `🏁 شاه مات! برنده: ${winner}`;
+                    } else {
+                        statusText = '🤝 پات · مساوی';
+                    }
+                }
+            } else {
+                if (game.isKingInCheck(state.turn)) {
+                    statusText = `⚠️ کیش! نوبت ${state.turn === 'white' ? 'سفید' : 'سیاه'}`;
+                    playCheckSound();
+                } else {
+                    statusText = `♟ نوبت: ${state.turn === 'white' ? 'سفید' : 'سیاه'}`;
+                }
+
+                if (gameMode === 'ai') {
+                    const levelNames = {
+                        'easy': '🟢 آسان',
+                        'medium': '🟡 متوسط',
+                        'hard': '🔴 سخت'
+                    };
+                    statusText += ` · 🤖 ${levelNames[aiLevel] || 'متوسط'}`;
+                }
+            }
+            statusMessage.innerHTML = statusText;
+
+            // به‌روزرسانی تایمر
+            updateTimerDisplay();
+        }
+
+        function handleGameOver() {
+            if (!game || !game.gameOver) return;
+
+            const state = game.getState();
+
+            // بررسی زمان
+            if (state.whiteTime <= 0 || state.blackTime <= 0) {
+                const winner = state.whiteTime <= 0 ? 'سیاه' : 'سفید';
+                statusMessage.innerHTML = `⏱️ زمان تمام شد! برنده: ${winner}`;
+                if (winner === 'سفید') {
+                    rankScore += 3;
+                    playWinSound();
+                    fireRocketEffect();
+                } else {
+                    rankScore += 1;
+                    playLoseSound();
+                }
+                updateRank();
+                return;
+            }
+
+            const winner = game.turn === 'white' ? 'سیاه' : 'سفید';
+            if (game.isKingInCheck(game.turn)) {
+                statusMessage.innerHTML = `🏁 شاه مات! برنده: ${winner}`;
+                if (winner === 'سفید') {
+                    rankScore += 5;
+                    playWinSound();
+                    fireRocketEffect();
+                } else {
+                    rankScore += 2;
+                    playLoseSound();
+                }
+            } else {
+                statusMessage.innerHTML = '🤝 پات · مساوی';
+                rankScore += 1;
+            }
+            updateRank();
+            game.stopTimer();
+            render();
+        }
+
+        // ===== شروع بازی =====
+        function startGame() {
+            gameMode = document.getElementById('gameModeSelect').value;
+            aiLevel = document.getElementById('aiLevelSelect').value;
+            timeLimit = parseInt(document.getElementById('timeSelect').value);
+            currentTheme = document.getElementById('themeSelect').value;
+            soundEnabled = document.getElementById('soundCheck').checked;
+            musicEnabled = document.getElementById('musicCheck').checked;
+            rocketEffectEnabled = document.getElementById('rocketCheck').checked;
+
+            updateRank();
+
+            game = new ChessGame(timeLimit);
+            loginPage.style.display = 'none';
+            gamePage.style.display = 'block';
+
+            render();
+
+            if (musicEnabled) startMusic();
+
+            // شروع تایمر
+            if (timeLimit > 0) {
+                setTimeout(() => {
+                    if (game && !game.gameOver) {
+                        game.startTimer();
+                    }
+                }, 500);
+            }
+
+            if (gameMode === 'ai' && game.turn === 'black') {
+                setTimeout(() => {
+                    game.makeAIMove(aiLevel);
+                    render();
+                    if (game.gameOver) handleGameOver();
+                }, 500);
+            }
+
+            statusMessage.innerHTML = '♟ شروع بازی · سفید شروع می‌کند';
+        }
+
+        // ===== ریست =====
+        function resetGame() {
+            if (game) game.stopTimer();
+            game = new ChessGame(timeLimit);
+            render();
+
+            if (timeLimit > 0) {
+                setTimeout(() => {
+                    if (game && !game.gameOver) {
+                        game.startTimer();
+                    }
+                }, 500);
+            }
+
+            statusMessage.innerHTML = '♟ بازی نو شروع شد';
+            if (gameMode === 'ai' && game.turn === 'black') {
+                setTimeout(() => {
+                    game.makeAIMove(aiLevel);
+                    render();
+                    if (game.gameOver) handleGameOver();
+                }, 400);
+            }
+        }
+
+        // ===== بازگشت =====
+        function goBack() {
+            if (game) game.stopTimer();
+            stopMusic();
+            gamePage.style.display = 'none';
+            loginPage.style.display = 'block';
+        }
+
+        // نمایش/مخفی کردن سطح AI
+        document.getElementById('gameModeSelect').addEventListener('change', function() {
+            document.getElementById('aiLevelGroup').style.display = this.value === 'ai' ? 'block' : 'none';
+        });
+
+        updateRank();
+        console.log('♚ شطرنج حرفه‌ای با تایمر و هوش مصنوعی پیشرفته');
+        console.log('✍️ ساخته شده توسط محمد حسین حبیبی راد');
+        console.log('📱 کانال ایتا: @irandigital_python');
+        console.log('🤖 سطوح AI: آسان (تصادفی) · متوسط (امتیازدهی) · سخت (جستجوی عمق ۳ + تکنیک‌های پیشرفته)');
+        console.log('⏱️ تایمر با ۴ گزینه: نامحدود، ۱، ۵، ۱۰ دقیقه');
+    </script>
+</body>
+</html>
